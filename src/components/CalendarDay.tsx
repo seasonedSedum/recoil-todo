@@ -38,11 +38,7 @@ const TableData = styled.td`
   position: relative;
 `;
 
-const Container = styled.div`
-  width: 100vw;
-  max-width: 386px;
-  padding: 8px;
-`;
+const Container = styled.div``;
 
 const CalendarDay: React.FC<Props> = ({ date }) => {
   const today = new Date();

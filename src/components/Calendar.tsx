@@ -1,9 +1,13 @@
 // src/components/Calendar.tsx
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import styled from "@emotion/styled/macro";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { selectedDateState } from "../features/TodoList/atom";
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  selectedDateState,
+  selectedTodoState,
+  todoListState,
+} from "../features/TodoList/atom";
 import CalendarDay from "./CalendarDay";
 
 const Header = styled.div`
@@ -100,6 +104,8 @@ const Calendar: React.FC = () => {
   const selectedDate = useRecoilValue(selectedDateState);
   const setSelectedDate = useSetRecoilState(selectedDateState);
 
+  const todoList = useRecoilValue(todoListState);
+
   const { year, month, firstDay, lastDay } = useMemo(() => {
     // 선택한 날짜를 기준으로 연, 월, 일, 해당 월의 첫째 날짜, 해달 월의 마지막 날짜 가져온다.
     const year = selectedDate.getFullYear();
@@ -139,6 +145,34 @@ const Calendar: React.FC = () => {
       <tr key={`week_${week}`}>{items.slice(week * 7, week * 7 + 7)}</tr>
     ));
   };
+
+  const removeTodo = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const todoList = snapshot.getLoadable(todoListState).getValue();
+        const selectedTodo = snapshot.getLoadable(selectedTodoState).getValue();
+
+        set(
+          todoListState,
+          todoList.filter((todo) => todo.id !== selectedTodo?.id)
+        );
+      },
+    [selectedDate, todoList]
+  );
+
+  useEffect(() => {
+    const onBackspaceKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Backspace") {
+        removeTodo();
+      }
+    };
+
+    window.addEventListener("keydown", onBackspaceKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onBackspaceKeyDown);
+    };
+  }, [removeTodo]);
 
   return (
     <Base>

@@ -10,7 +10,6 @@ interface Props {
 
 const Portal: React.FC<Props> = ({ children }) => {
   const rootElement = document.getElementById("#modal-root");
-
   return <>{rootElement ? createPortal(children, rootElement) : children}</>;
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "@emotion/styled/macro";
 import Modal from "../../components/Modal";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -9,6 +9,7 @@ import {
   selectedDateState,
   todoListState,
 } from "../TodoList/atom";
+import { getSimpleDateFormat } from "../../utils/utils";
 
 const Container = styled.div`
   width: 100vw;
@@ -94,7 +95,7 @@ const TodoStatisticsModal: React.FC = () => {
     <Modal isOpen={isOpen} onClose={handleClose}>
       <Container>
         <Card>
-          <Date>2022-08-29</Date>
+          <Date>{getSimpleDateFormat(selectedDate)}</Date>
           <Statistics>
             할 일 {statistics.total - statistics.done}개 남음
           </Statistics>
@@ -103,8 +104,11 @@ const TodoStatisticsModal: React.FC = () => {
               <TodoItem key={todo.id}>
                 <Content>{todo.content}</Content>
                 <TodoActions>
-                  <TodoActionButton>
-                    <HiOutlineTrash onClick={() => removeTodo(todo.id)} />
+                  <TodoActionButton
+                    secondary
+                    onClick={() => removeTodo(todo.id)}
+                  >
+                    <HiOutlineTrash />
                   </TodoActionButton>
                 </TodoActions>
               </TodoItem>
@@ -115,3 +119,5 @@ const TodoStatisticsModal: React.FC = () => {
     </Modal>
   );
 };
+
+export default TodoStatisticsModal;
